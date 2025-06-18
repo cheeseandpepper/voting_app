@@ -44,6 +44,9 @@ group :development, :test do
   gem 'rspec-rails', '~> 6.1.0'
   gem 'faker'
   gem 'pry-byebug'
+  gem 'factory_bot_rails'
+  gem 'database_cleaner-active_record'
+  gem 'shoulda-matchers'
 end
 
 group :development do
