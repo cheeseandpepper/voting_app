@@ -3,16 +3,30 @@ import Results from "./Results";
 import SignInForm from "./SignInForm";
 import VoteForm from "./VoteForm";
 
-const Home = ({ results }) => {
+const Home = ({ results: initialResults }) => {
   const [showSignInForm, setShowSignInForm] = useState(false);
   const [showVoteForm, setShowVoteForm] = useState(false);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [hasVoted, setHasVoted] = useState(false);
+  const [results, setResults] = useState(initialResults);
 
   useEffect(() => {
     checkAuthStatus();
   }, []);
+
+  const fetchResults = async () => {
+    try {
+      const response = await fetch('/results');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const resultsData = await response.json();
+      setResults(resultsData);
+    } catch (error) {
+      console.error('Error fetching results:', error);
+    }
+  };
 
   const checkAuthStatus = async () => {
     try {
@@ -60,17 +74,14 @@ const Home = ({ results }) => {
       
       if (data.success) {
         console.log('Sign out successful:', data.message);
-        alert(data.message);
         setIsSignedIn(false);
         setCurrentUser(null);
         setHasVoted(false);
       } else {
         console.log('Sign out failed:', data.message);
-        alert(data.message);
       }
     } catch (error) {
       console.error('Sign out error:', error);
-      alert('An error occurred during sign out. Please try again.');
     }
   };
 
@@ -78,7 +89,6 @@ const Home = ({ results }) => {
     setShowSignInForm(false);
     setIsSignedIn(true);
     setCurrentUser(user);
-    // Re-check auth status to get voting status
     checkAuthStatus();
   };
 
@@ -89,11 +99,10 @@ const Home = ({ results }) => {
   const handleVoteSuccess = () => {
     setShowVoteForm(false);
     setHasVoted(true);
-    // Re-check auth status to update voting status
+    fetchResults();
     checkAuthStatus();
   };
 
-  // Convert results to candidates format for VoteForm
   const candidates = results ? results.map((item, index) => ({
     id: index + 1,
     name: item.name

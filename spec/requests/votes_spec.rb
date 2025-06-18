@@ -26,7 +26,7 @@ RSpec.describe "Votes", type: :request do
         
         expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)["success"]).to eq(false)
-        expect(JSON.parse(response.body)["message"]).to eq("Please select a candidate")
+        expect(JSON.parse(response.body)["message"]).to eq("Candidate must exist")
       end
 
       it "fails when candidate_id is invalid" do
@@ -34,7 +34,7 @@ RSpec.describe "Votes", type: :request do
         
         expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)["success"]).to eq(false)
-        expect(JSON.parse(response.body)["message"]).to eq("Invalid candidate selected")
+        expect(JSON.parse(response.body)["message"]).to eq("Candidate must exist")
       end
     end
 
@@ -45,7 +45,7 @@ RSpec.describe "Votes", type: :request do
             candidate_attributes: { full_name: "Jane Smith" }
           }
         }
-        
+         
         expect(response).to have_http_status(:ok)
         expect(JSON.parse(response.body)["success"]).to eq(true)
         expect(JSON.parse(response.body)["message"]).to include("Vote cast successfully for Jane Smith")
@@ -65,7 +65,7 @@ RSpec.describe "Votes", type: :request do
         
         expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)["success"]).to eq(false)
-        expect(JSON.parse(response.body)["message"]).to eq("Candidate name cannot be blank")
+        expect(JSON.parse(response.body)["message"]).to eq("Candidate full name can't be blank, Candidate full name is too short (minimum is 2 characters)")
       end
 
       it "fails when candidate name is only whitespace" do
@@ -77,7 +77,7 @@ RSpec.describe "Votes", type: :request do
         
         expect(response).to have_http_status(:unprocessable_entity)
         expect(JSON.parse(response.body)["success"]).to eq(false)
-        expect(JSON.parse(response.body)["message"]).to eq("Candidate name cannot be blank")
+        expect(JSON.parse(response.body)["message"]).to eq("Candidate full name can't be blank")
       end
     end
 

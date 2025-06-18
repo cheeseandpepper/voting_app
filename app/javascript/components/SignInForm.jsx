@@ -5,6 +5,7 @@ const SignInForm = ({ isVisible, onClose, onSignInSuccess }) => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    
     try {
       const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
       
@@ -14,7 +15,11 @@ const SignInForm = ({ isVisible, onClose, onSignInSuccess }) => {
           'Content-Type': 'application/json',
           'X-CSRF-Token': csrfToken
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({ 
+          email: formData.email, 
+          password: formData.password, 
+          zip_code: formData.zip_code 
+        })
       });
       
       if (!response.ok) {
@@ -25,16 +30,12 @@ const SignInForm = ({ isVisible, onClose, onSignInSuccess }) => {
       
       if (data.success) {
         console.log('Sign in successful:', data.message);
-        alert(data.message);
-        setFormData({ email: '', password: '', zip_code: '' });
         onSignInSuccess(data.user);
       } else {
         console.log('Sign in failed:', data.message);
-        alert(data.message);
       }
     } catch (error) {
       console.error('Sign in error:', error);
-      alert('An error occurred during sign in. Please try again.');
     }
   };
 

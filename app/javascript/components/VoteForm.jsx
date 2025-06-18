@@ -8,7 +8,7 @@ const VoteForm = ({ isVisible, onClose, onVoteSuccess, candidates }) => {
     e.preventDefault();
     
     if (!selectedCandidate) {
-      alert('Please select a candidate to vote for.');
+      console.log('Please select a candidate to vote for.');
       return;
     }
 
@@ -34,24 +34,21 @@ const VoteForm = ({ isVisible, onClose, onVoteSuccess, candidates }) => {
       
       if (data.success) {
         console.log('Vote successful:', data.message);
-        alert(data.message);
         setSelectedCandidate('');
         onVoteSuccess();
       } else {
         console.log('Vote failed:', data.message);
-        alert(data.message);
       }
     } catch (error) {
       console.error('Vote error:', error);
-      alert('An error occurred while voting. Please try again.');
     }
   };
 
-  const handleNewCandidateVoteSubmit = async (e) => {
+  const handleNewVoteSubmit = async (e) => {
     e.preventDefault();
     
     if (!newCandidateName.trim()) {
-      alert('Please enter a candidate name.');
+      console.log('Please enter a candidate name.');
       return;
     }
 
@@ -78,17 +75,14 @@ const VoteForm = ({ isVisible, onClose, onVoteSuccess, candidates }) => {
       const data = await response.json();
       
       if (data.success) {
-        console.log('New candidate vote successful:', data.message);
-        alert(data.message);
+        console.log('Vote successful:', data.message);
         setNewCandidateName('');
         onVoteSuccess();
       } else {
-        console.log('New candidate vote failed:', data.message);
-        alert(data.message);
+        console.log('Vote failed:', data.message);
       }
     } catch (error) {
-      console.error('New candidate vote error:', error);
-      alert('An error occurred while voting for new candidate. Please try again.');
+      console.error('Vote error:', error);
     }
   };
 
@@ -174,7 +168,7 @@ const VoteForm = ({ isVisible, onClose, onVoteSuccess, candidates }) => {
         </div>
 
         {/* New Candidate Section */}
-        <form onSubmit={handleNewCandidateVoteSubmit}>
+        <form onSubmit={handleNewVoteSubmit}>
           <div style={{ marginBottom: "1rem" }}>
             <input
               type="text"
