@@ -135,7 +135,8 @@ const Home = ({ results: initialResults }) => {
                 color: "#fff",
                 border: "none",
                 cursor: "pointer",
-                fontFamily: "inherit"
+                fontFamily: "inherit",
+                borderRadius: "8px"
               }}
             >
               Sign Out
@@ -150,7 +151,8 @@ const Home = ({ results: initialResults }) => {
               color: "#fff",
               border: "none",
               cursor: "pointer",
-              fontFamily: "inherit"
+              fontFamily: "inherit",
+              borderRadius: "8px"
             }}
           >
             Sign In

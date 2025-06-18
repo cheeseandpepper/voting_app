@@ -150,7 +150,8 @@ const VoteForm = ({ isVisible, onClose, onVoteSuccess, candidates }) => {
                 border: "none",
                 cursor: "pointer",
                 fontFamily: "inherit",
-                fontSize: "1rem"
+                fontSize: "1rem",
+                borderRadius: "8px"
               }}
             >
               Vote
@@ -181,7 +182,8 @@ const VoteForm = ({ isVisible, onClose, onVoteSuccess, candidates }) => {
                 width: "100%",
                 padding: "0.5rem",
                 border: "1px solid #000",
-                fontFamily: "inherit"
+                fontFamily: "inherit",
+                borderRadius: "6px"
               }}
             />
           </div>
@@ -196,7 +198,8 @@ const VoteForm = ({ isVisible, onClose, onVoteSuccess, candidates }) => {
                 border: "none",
                 cursor: "pointer",
                 fontFamily: "inherit",
-                fontSize: "1rem"
+                fontSize: "1rem",
+                borderRadius: "8px"
               }}
             >
               Vote
@@ -211,7 +214,8 @@ const VoteForm = ({ isVisible, onClose, onVoteSuccess, candidates }) => {
                 border: "1px solid #000",
                 cursor: "pointer",
                 fontFamily: "inherit",
-                fontSize: "1rem"
+                fontSize: "1rem",
+                borderRadius: "8px"
               }}
             >
               Cancel

@@ -26,7 +26,8 @@ const Results = ({ results, isSignedIn, hasVoted, onVote }) => {
                 border: "none",
                 cursor: "pointer",
                 fontFamily: "inherit",
-                fontSize: "1rem"
+                fontSize: "1rem",
+                borderRadius: "8px"
               }}
             >
               Vote

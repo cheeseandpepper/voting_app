@@ -67,11 +67,11 @@ const SignInForm = ({ isVisible, onClose, onSignInSuccess }) => {
         border: "1px solid #000",
         minWidth: "300px"
       }}>
-        <h2>Sign In</h2>
+        <h2>Sign in to vote</h2>
         <form onSubmit={handleFormSubmit}>
           <div style={{ marginBottom: "1rem" }}>
             <label style={{ display: "block", marginBottom: "0.5rem" }}>
-              Email:
+              Email
             </label>
             <input
               type="email"
@@ -83,13 +83,14 @@ const SignInForm = ({ isVisible, onClose, onSignInSuccess }) => {
                 width: "100%",
                 padding: "0.5rem",
                 border: "1px solid #000",
-                fontFamily: "inherit"
+                fontFamily: "inherit",
+                borderRadius: "6px"
               }}
             />
           </div>
           <div style={{ marginBottom: "1rem" }}>
             <label style={{ display: "block", marginBottom: "0.5rem" }}>
-              Password:
+              Password
             </label>
             <input
               type="password"
@@ -101,13 +102,14 @@ const SignInForm = ({ isVisible, onClose, onSignInSuccess }) => {
                 width: "100%",
                 padding: "0.5rem",
                 border: "1px solid #000",
-                fontFamily: "inherit"
+                fontFamily: "inherit",
+                borderRadius: "6px"
               }}
             />
           </div>
           <div style={{ marginBottom: "1rem" }}>
             <label style={{ display: "block", marginBottom: "0.5rem" }}>
-              Zip Code:
+              Zip code
             </label>
             <input
               type="text"
@@ -121,7 +123,8 @@ const SignInForm = ({ isVisible, onClose, onSignInSuccess }) => {
                 width: "100%",
                 padding: "0.5rem",
                 border: "1px solid #000",
-                fontFamily: "inherit"
+                fontFamily: "inherit",
+                borderRadius: "6px"
               }}
             />
           </div>
@@ -134,10 +137,11 @@ const SignInForm = ({ isVisible, onClose, onSignInSuccess }) => {
                 color: "#fff",
                 border: "none",
                 cursor: "pointer",
-                fontFamily: "inherit"
+                fontFamily: "inherit",
+                borderRadius: "8px"
               }}
             >
-              Submit
+              Sign in
             </button>
             <button
               type="button"
@@ -148,7 +152,8 @@ const SignInForm = ({ isVisible, onClose, onSignInSuccess }) => {
                 color: "#000",
                 border: "1px solid #000",
                 cursor: "pointer",
-                fontFamily: "inherit"
+                fontFamily: "inherit",
+                borderRadius: "8px"
               }}
             >
               Cancel
