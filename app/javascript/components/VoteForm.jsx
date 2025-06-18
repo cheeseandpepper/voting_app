@@ -2,8 +2,9 @@ import React, { useState } from "react";
 
 const VoteForm = ({ isVisible, onClose, onVoteSuccess, candidates }) => {
   const [selectedCandidate, setSelectedCandidate] = useState('');
+  const [newCandidateName, setNewCandidateName] = useState('');
 
-  const handleFormSubmit = async (e) => {
+  const handleExistingVoteSubmit = async (e) => {
     e.preventDefault();
     
     if (!selectedCandidate) {
@@ -20,7 +21,9 @@ const VoteForm = ({ isVisible, onClose, onVoteSuccess, candidates }) => {
           'Content-Type': 'application/json',
           'X-CSRF-Token': csrfToken
         },
-        body: JSON.stringify({ candidate_id: selectedCandidate })
+        body: JSON.stringify({ 
+          vote: { candidate_id: selectedCandidate }
+        })
       });
       
       if (!response.ok) {
@@ -44,8 +47,57 @@ const VoteForm = ({ isVisible, onClose, onVoteSuccess, candidates }) => {
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleNewCandidateVoteSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!newCandidateName.trim()) {
+      alert('Please enter a candidate name.');
+      return;
+    }
+
+    try {
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+      
+      const response = await fetch('/votes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken
+        },
+        body: JSON.stringify({ 
+          vote: { 
+            candidate_attributes: { full_name: newCandidateName.trim() }
+          }
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        console.log('New candidate vote successful:', data.message);
+        alert(data.message);
+        setNewCandidateName('');
+        onVoteSuccess();
+      } else {
+        console.log('New candidate vote failed:', data.message);
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('New candidate vote error:', error);
+      alert('An error occurred while voting for new candidate. Please try again.');
+    }
+  };
+
+  const handleRadioChange = (e) => {
     setSelectedCandidate(e.target.value);
+  };
+
+  const handleNewCandidateInputChange = (e) => {
+    setNewCandidateName(e.target.value);
   };
 
   if (!isVisible) return null;
@@ -67,18 +119,69 @@ const VoteForm = ({ isVisible, onClose, onVoteSuccess, candidates }) => {
         background: "#fff",
         padding: "2rem",
         border: "1px solid #000",
-        minWidth: "300px"
+        minWidth: "400px"
       }}>
-        <h2>Cast Your Vote</h2>
-        <form onSubmit={handleFormSubmit}>
-          <div style={{ marginBottom: "1rem" }}>
-            <label style={{ display: "block", marginBottom: "0.5rem" }}>
-              Select a candidate:
+        <h2>Cast your vote today!</h2>
+        
+        {/* Existing Candidates Section */}
+        <form onSubmit={handleExistingVoteSubmit}>
+          <div style={{ marginBottom: "1.5rem" }}>
+            <label style={{ display: "block", marginBottom: "1rem", fontWeight: "bold" }}>
+              Select an existing candidate:
             </label>
-            <select
-              name="candidate"
-              value={selectedCandidate}
-              onChange={handleInputChange}
+            {candidates && candidates.map((candidate) => (
+              <div key={candidate.id} style={{ marginBottom: "0.5rem" }}>
+                <label style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+                  <input
+                    type="radio"
+                    name="candidate"
+                    value={candidate.id}
+                    checked={selectedCandidate === candidate.id.toString()}
+                    onChange={handleRadioChange}
+                    style={{ marginRight: "0.5rem" }}
+                  />
+                  {candidate.name}
+                </label>
+              </div>
+            ))}
+          </div>
+          
+          <div style={{ marginBottom: "2rem" }}>
+            <button
+              type="submit"
+              style={{
+                padding: "0.75rem 1.5rem",
+                background: "#000",
+                color: "#fff",
+                border: "none",
+                cursor: "pointer",
+                fontFamily: "inherit",
+                fontSize: "1rem"
+              }}
+            >
+              Vote
+            </button>
+          </div>
+        </form>
+
+        {/* Divider */}
+        <div style={{ 
+          borderTop: "1px solid #ccc", 
+          marginBottom: "1.5rem",
+          paddingTop: "1rem"
+        }}>
+          <p style={{ margin: 0, fontWeight: "bold" }}>Or, add a new candidate:</p>
+        </div>
+
+        {/* New Candidate Section */}
+        <form onSubmit={handleNewCandidateVoteSubmit}>
+          <div style={{ marginBottom: "1rem" }}>
+            <input
+              type="text"
+              name="new_candidate_name"
+              value={newCandidateName}
+              onChange={handleNewCandidateInputChange}
+              placeholder="Enter candidate name"
               required
               style={{
                 width: "100%",
@@ -86,39 +189,35 @@ const VoteForm = ({ isVisible, onClose, onVoteSuccess, candidates }) => {
                 border: "1px solid #000",
                 fontFamily: "inherit"
               }}
-            >
-              <option value="">Choose a candidate...</option>
-              {candidates && candidates.map((candidate) => (
-                <option key={candidate.id} value={candidate.id}>
-                  {candidate.name}
-                </option>
-              ))}
-            </select>
+            />
           </div>
+          
           <div style={{ display: "flex", gap: "1rem" }}>
             <button
               type="submit"
               style={{
-                padding: "0.5rem 1rem",
+                padding: "0.75rem 1.5rem",
                 background: "#000",
                 color: "#fff",
                 border: "none",
                 cursor: "pointer",
-                fontFamily: "inherit"
+                fontFamily: "inherit",
+                fontSize: "1rem"
               }}
             >
-              Submit Vote
+              Vote
             </button>
             <button
               type="button"
               onClick={onClose}
               style={{
-                padding: "0.5rem 1rem",
+                padding: "0.75rem 1.5rem",
                 background: "#fff",
                 color: "#000",
                 border: "1px solid #000",
                 cursor: "pointer",
-                fontFamily: "inherit"
+                fontFamily: "inherit",
+                fontSize: "1rem"
               }}
             >
               Cancel

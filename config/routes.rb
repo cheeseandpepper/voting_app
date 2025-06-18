@@ -11,4 +11,6 @@ Rails.application.routes.draw do
   delete 'sessions', to: 'sessions#destroy'
   post 'sessions', to: 'sessions#create'
   get 'auth/status', to: 'sessions#status'
+  
+  post 'votes', to: 'votes#create'
 end
