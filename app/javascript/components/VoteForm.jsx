@@ -120,9 +120,6 @@ const VoteForm = ({ isVisible, onClose, onVoteSuccess, candidates }) => {
         {/* Existing Candidates Section */}
         <form onSubmit={handleExistingVoteSubmit}>
           <div style={{ marginBottom: "1.5rem" }}>
-            <label style={{ display: "block", marginBottom: "1rem", fontWeight: "bold" }}>
-              Select an existing candidate:
-            </label>
             {candidates && candidates.map((candidate) => (
               <div key={candidate.id} style={{ marginBottom: "0.5rem" }}>
                 <label style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
@@ -176,7 +173,7 @@ const VoteForm = ({ isVisible, onClose, onVoteSuccess, candidates }) => {
               name="new_candidate_name"
               value={newCandidateName}
               onChange={handleNewCandidateInputChange}
-              placeholder="Enter candidate name"
+              placeholder="Enter name..."
               required
               style={{
                 width: "100%",

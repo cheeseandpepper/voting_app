@@ -126,7 +126,7 @@ const Home = ({ results: initialResults }) => {
         <h1>Voting App</h1>
         {isSignedIn ? (
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <span>Welcome, {currentUser?.email}</span>
+            <span>signed in as {currentUser?.email}</span>
             <button 
               onClick={handleSignOut}
               style={{
