@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
+import Results from "./Results";
+import SignInForm from "./SignInForm";
+import VoteForm from "./VoteForm";
 
 const Home = ({ results }) => {
   const [showSignInForm, setShowSignInForm] = useState(false);
-  const [formData, setFormData] = useState({ email: '', password: '', zip_code: '' });
+  const [showVoteForm, setShowVoteForm] = useState(false);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [hasVoted, setHasVoted] = useState(false);
 
   useEffect(() => {
     checkAuthStatus();
@@ -18,14 +22,17 @@ const Home = ({ results }) => {
       if (data.signed_in) {
         setIsSignedIn(true);
         setCurrentUser(data.user);
+        setHasVoted(data.has_voted);
       } else {
         setIsSignedIn(false);
         setCurrentUser(null);
+        setHasVoted(false);
       }
     } catch (error) {
       console.error('Error checking auth status:', error);
       setIsSignedIn(false);
       setCurrentUser(null);
+      setHasVoted(false);
     }
   };
 
@@ -56,6 +63,7 @@ const Home = ({ results }) => {
         alert(data.message);
         setIsSignedIn(false);
         setCurrentUser(null);
+        setHasVoted(false);
       } else {
         console.log('Sign out failed:', data.message);
         alert(data.message);
@@ -66,49 +74,30 @@ const Home = ({ results }) => {
     }
   };
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-      
-      const response = await fetch('/sessions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': csrfToken
-        },
-        body: JSON.stringify(formData)
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        console.log('Sign in successful:', data.message);
-        alert(data.message);
-        setShowSignInForm(false);
-        setFormData({ email: '', password: '', zip_code: '' });
-        setIsSignedIn(true);
-        setCurrentUser(data.user);
-      } else {
-        console.log('Sign in failed:', data.message);
-        alert(data.message);
-      }
-    } catch (error) {
-      console.error('Sign in error:', error);
-      alert('An error occurred during sign in. Please try again.');
-    }
+  const handleSignInSuccess = (user) => {
+    setShowSignInForm(false);
+    setIsSignedIn(true);
+    setCurrentUser(user);
+    // Re-check auth status to get voting status
+    checkAuthStatus();
   };
 
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+  const handleVote = () => {
+    setShowVoteForm(true);
   };
+
+  const handleVoteSuccess = () => {
+    setShowVoteForm(false);
+    setHasVoted(true);
+    // Re-check auth status to update voting status
+    checkAuthStatus();
+  };
+
+  // Convert results to candidates format for VoteForm
+  const candidates = results ? results.map((item, index) => ({
+    id: index + 1,
+    name: item.name
+  })) : [];
 
   return (
     <div style={{ 
@@ -128,7 +117,7 @@ const Home = ({ results }) => {
         <h1>Voting App</h1>
         {isSignedIn ? (
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <span>signed in as {currentUser?.email}</span>
+            <span>Welcome, {currentUser?.email}</span>
             <button 
               onClick={handleSignOut}
               style={{
@@ -160,119 +149,21 @@ const Home = ({ results }) => {
         )}
       </header>
       
-      {showSignInForm && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "rgba(0,0,0,0.5)",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          zIndex: 1000
-        }}>
-          <div style={{
-            background: "#fff",
-            padding: "2rem",
-            border: "1px solid #000",
-            minWidth: "300px"
-          }}>
-            <h2>Sign In</h2>
-            <form onSubmit={handleFormSubmit}>
-              <div style={{ marginBottom: "1rem" }}>
-                <label style={{ display: "block", marginBottom: "0.5rem" }}>
-                  Email:
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                  style={{
-                    width: "100%",
-                    padding: "0.5rem",
-                    border: "1px solid #000",
-                    fontFamily: "inherit"
-                  }}
-                />
-              </div>
-              <div style={{ marginBottom: "1rem" }}>
-                <label style={{ display: "block", marginBottom: "0.5rem" }}>
-                  Password:
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  required
-                  style={{
-                    width: "100%",
-                    padding: "0.5rem",
-                    border: "1px solid #000",
-                    fontFamily: "inherit"
-                  }}
-                />
-              </div>
-              <div style={{ marginBottom: "1rem" }}>
-                <label style={{ display: "block", marginBottom: "0.5rem" }}>
-                  Zip Code:
-                </label>
-                <input
-                  type="text"
-                  name="zip_code"
-                  value={formData.zip_code}
-                  onChange={handleInputChange}
-                  required
-                  pattern="[0-9]{5}"
-                  title="Please enter a valid 5-digit zip code"
-                  style={{
-                    width: "100%",
-                    padding: "0.5rem",
-                    border: "1px solid #000",
-                    fontFamily: "inherit"
-                  }}
-                />
-              </div>
-              <div style={{ display: "flex", gap: "1rem" }}>
-                <button
-                  type="submit"
-                  style={{
-                    padding: "0.5rem 1rem",
-                    background: "#000",
-                    color: "#fff",
-                    border: "none",
-                    cursor: "pointer",
-                    fontFamily: "inherit"
-                  }}
-                >
-                  Submit
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowSignInForm(false)}
-                  style={{
-                    padding: "0.5rem 1rem",
-                    background: "#fff",
-                    color: "#000",
-                    border: "1px solid #000",
-                    cursor: "pointer",
-                    fontFamily: "inherit"
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <SignInForm 
+        isVisible={showSignInForm}
+        onClose={() => setShowSignInForm(false)}
+        onSignInSuccess={handleSignInSuccess}
+      />
+
+      <VoteForm
+        isVisible={showVoteForm}
+        onClose={() => setShowVoteForm(false)}
+        onVoteSuccess={handleVoteSuccess}
+        candidates={candidates}
+      />
       
-      <main style={{ padding: "2rem" }}>
-        <h2>Results: {results}</h2>
+      <main>
+        <Results results={results} isSignedIn={isSignedIn} hasVoted={hasVoted} onVote={handleVote} />
       </main>
     </div>
   );

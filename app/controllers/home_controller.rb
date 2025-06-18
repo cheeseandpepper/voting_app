@@ -13,6 +13,6 @@ class HomeController < ApplicationController
         name: "Band 3",
         vote_count: 10
       }
-    ].to_s
+    ]
   end
 end

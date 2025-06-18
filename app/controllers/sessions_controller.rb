@@ -20,7 +20,12 @@ class SessionsController < ApplicationController
     if session[:user_id]
       user = User.find_by(id: session[:user_id])
       if user
-        render json: { signed_in: true, user: { id: user.id, email: user.email } }
+        has_voted = user.vote.present?
+        render json: { 
+          signed_in: true, 
+          user: { id: user.id, email: user.email },
+          has_voted: has_voted
+        }
       else
         session[:user_id] = nil
         render json: { signed_in: false }
