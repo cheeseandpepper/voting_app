@@ -1,97 +1,74 @@
-# Voting app for interview exercises
+# Voting App
 
-This Rails and React application is the starting point for our Voting app
-interview exercise. You may not need all the various files included to complete
-the assignment, but they are here in case they help you move faster! Please
-modify anything you need to in order to meet the requirements and show us your
-own approach.
+## Summary
 
-## Installation
+This is a very quick implementation, of a voting app with the following rules:
+ - Must be signed in to vote
+ - Can see the results whether signed in or not
+ - Results are in the format of name | count
+ - User can vote only once
+ - User can choose existing candidate or add a new (adding a new constitutes a vote)
 
-Your development environment should have:
+## Setup
 
-* Ruby v3.1.2
-* [Bundler](https://bundler.io/)
-* Node v20.18.2
-* Yarn v1.22.19
-* git
-* [SQLite3](https://www.sqlite.org/)
+1. **Clone the repository:**
+   ```bash
+   git clone <repo-url>
+   cd voting-app-interview-exercise-main
+   ```
 
-Initialize git, install the application, and initialize the database:
+2. **Install Ruby gems:**
+   ```bash
+   bundle install
+   ```
 
-```sh
-# First, download the zip file, unzip the directory,
-# and navigate into the project directory. Then:
-git init
-git add .
-git commit -m "Initial files provided"
-bundle install
-bundle exec rake db:migrate
+3. **Install JavaScript dependencies:**
+   ```bash
+   yarn install
+   ```
 
-# Install JS packages, including React
-yarn install
-```
+4. **Set up the database:**
+   ```bash
+   rails db:setup
+   # or, if you already have a database:
+   rails db:migrate
+   rails db:seed
+   ```
 
-## Running the app
+5. **Run the Rails server:**
+   ```bash
+   rails server
+   ```
 
-```sh
-bundle exec rails server
-```
+6. **(Optional) Run the Webpack dev server for React hot reloading:**
+   ```bash
+   ./bin/webpack-dev-server
+   ```
 
-Visit [http://localhost:3000](http://localhost:3000) in your browser
+7. **Visit the app:**
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-For asset live reloading, run:
-```sh
-./bin/shakapacker-dev-server
-```
+## Running Tests
 
-If the assets ever get out of sync, delete `/public/packs` and restart your
-Rails server (and your shakapacker-dev-server if it was running).
+- **Rails model and request specs:**
+  ```bash
+  bundle exec rspec
+  ```
 
-## Running tests
+- **(Optional) JavaScript/React tests:**
+  If you add frontend tests, run them with:
+  ```bash
+  yarn test
+  ```
 
-The included test suite uses Rspec and Capybara.
+## Project Structure
 
-Check out `spec/requests/` for example tests.
+- `app/models/` — Rails models (User, Candidate, Vote)
+- `app/controllers/` — Rails controllers (Sessions, Votes, Home)
+- `app/javascript/components/` — React components (Home, SignInForm, VoteForm, Results)
+- `spec/` — RSpec tests
 
-```sh
-# Run all tests
-bundle exec rspec
-
-# Run one test file
-bundle exec rspec <path/to/the/file.rb>
-
-# Run one test case inside a test file
-bundle exec rspec <path/to/the/file.rb>:<line_number>
-```
-
-## Accessing the Rails console
-
-```sh
-bundle exec rails console
-```
-
-## Debugging
-
-You can open up a debugging console by adding `binding.pry` anywhere in test or
-application code.
-
-Example:
-
-```rb
-def show
-  binding.pry
-  render json: { data: @my_object }, status: :ok
-end
-```
-
-In this example, when the `show` method is hit during click testing or a test,
-a debugger will open up in the terminal, where you can inspect values:
-
-```rb
-@my_object.id
-@my_object.valid?
-```
-
-Step to the next line with `next`. Resume regular code execution or tests with
-`continue`.
+## Notes
+- Passwords are stored in plain text for demo purposes and seeded via the seeds file. This is not cool, and I would put more time into auth. This is fake auth for demonstration purposes.
+- Controllers are handling a bit too much logic. I would extract much of this into service classes in the real world.
+- I leveraged AI tooling for **much** of the frontend code. There were a lot of specific UI elements that I would need a lot more time to implement. 
