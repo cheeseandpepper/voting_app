@@ -1,35 +1,105 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Home = ({ results }) => {
   const [showSignInForm, setShowSignInForm] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '', zip_code: '' });
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  const checkAuthStatus = async () => {
+    try {
+      const response = await fetch('/auth/status');
+      const data = await response.json();
+      
+      if (data.signed_in) {
+        setIsSignedIn(true);
+        setCurrentUser(data.user);
+      } else {
+        setIsSignedIn(false);
+        setCurrentUser(null);
+      }
+    } catch (error) {
+      console.error('Error checking auth status:', error);
+      setIsSignedIn(false);
+      setCurrentUser(null);
+    }
+  };
 
   const handleSignInClick = async () => {
     setShowSignInForm(true);
   };
 
+  const handleSignOut = async () => {
+    try {
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+      
+      const response = await fetch('/sessions', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        console.log('Sign out successful:', data.message);
+        alert(data.message);
+        setIsSignedIn(false);
+        setCurrentUser(null);
+      } else {
+        console.log('Sign out failed:', data.message);
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('Sign out error:', error);
+      alert('An error occurred during sign out. Please try again.');
+    }
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/sign_in', {
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+      
+      const response = await fetch('/sessions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken
         },
         body: JSON.stringify(formData)
       });
       
-      if (response.ok) {
-        console.log('Sign in successful');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        console.log('Sign in successful:', data.message);
+        alert(data.message);
         setShowSignInForm(false);
         setFormData({ email: '', password: '', zip_code: '' });
-        // Handle successful sign in
+        setIsSignedIn(true);
+        setCurrentUser(data.user);
       } else {
-        console.log('Sign in failed');
-        // Handle sign in failure
+        console.log('Sign in failed:', data.message);
+        alert(data.message);
       }
     } catch (error) {
       console.error('Sign in error:', error);
+      alert('An error occurred during sign in. Please try again.');
     }
   };
 
@@ -56,19 +126,38 @@ const Home = ({ results }) => {
         alignItems: "center"
       }}>
         <h1>Voting App</h1>
-        <button 
-          onClick={handleSignInClick}
-          style={{
-            padding: "0.5rem 1rem",
-            background: "#000",
-            color: "#fff",
-            border: "none",
-            cursor: "pointer",
-            fontFamily: "inherit"
-          }}
-        >
-          Sign In
-        </button>
+        {isSignedIn ? (
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <span>signed in as {currentUser?.email}</span>
+            <button 
+              onClick={handleSignOut}
+              style={{
+                padding: "0.5rem 1rem",
+                background: "#000",
+                color: "#fff",
+                border: "none",
+                cursor: "pointer",
+                fontFamily: "inherit"
+              }}
+            >
+              Sign Out
+            </button>
+          </div>
+        ) : (
+          <button 
+            onClick={handleSignInClick}
+            style={{
+              padding: "0.5rem 1rem",
+              background: "#000",
+              color: "#fff",
+              border: "none",
+              cursor: "pointer",
+              fontFamily: "inherit"
+            }}
+          >
+            Sign In
+          </button>
+        )}
       </header>
       
       {showSignInForm && (
