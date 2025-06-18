@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe "Votes", type: :request do
-  let!(:user) { User.create!(email: "user1@example.com", password: "password123", zip_code: "11111") }
-  let!(:candidate) { Candidate.create!(full_name: "John Doe") }
+  let!(:user) { create(:user, email: "user1@example.com", password: "password123", zip_code: "11111") }
+  let!(:candidate) { create(:candidate, full_name: "John Doe") }
 
   before do
     post "/sessions", params: { email: user.email, password: user.password, zip_code: user.zip_code }
@@ -83,7 +83,7 @@ RSpec.describe "Votes", type: :request do
 
     context "when user has already voted" do
       before do
-        Vote.create!(user: user, candidate: candidate)
+        create(:vote, user: user, candidate: candidate)
       end
 
       it "fails to create a second vote" do

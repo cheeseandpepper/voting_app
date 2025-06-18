@@ -1,14 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe "Home", type: :request do
-  let!(:candidate1) { Candidate.create!(full_name: "Alice") }
-  let!(:candidate2) { Candidate.create!(full_name: "Bob") }
-  let!(:user1) { User.create!(email: "user1@example.com", password: "password123", zip_code: "11111") }
-  let!(:user2) { User.create!(email: "user2@example.com", password: "password456", zip_code: "22222") }
+  let!(:candidate1) { create(:candidate, full_name: "Alice") }
+  let!(:candidate2) { create(:candidate, full_name: "Bob") }
+  let!(:user1) { create(:user, email: "user1@example.com", password: "password123", zip_code: "11111") }
+  let!(:user2) { create(:user, email: "user2@example.com", password: "password456", zip_code: "22222") }
 
   before do
-    Vote.create!(user: user1, candidate: candidate1)
-    Vote.create!(user: user2, candidate: candidate2)
+    create(:vote, user: user1, candidate: candidate1)
+    create(:vote, user: user2, candidate: candidate2)
   end
 
   describe "GET /" do

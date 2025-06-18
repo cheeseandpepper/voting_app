@@ -8,6 +8,7 @@ This is a very quick implementation, of a voting app with the following rules:
  - Results are in the format of name | count
  - User can vote only once
  - User can choose existing candidate or add a new (adding a new constitutes a vote)
+ - 10 Users are seeded, 0-9 with email address user0@example.com and zip code 00000. Repeat pattern for each user.
 
 ## Setup
 
@@ -69,6 +70,7 @@ This is a very quick implementation, of a voting app with the following rules:
 - `spec/` — RSpec tests
 
 ## Notes
-- Passwords are stored in plain text for demo purposes and seeded via the seeds file. This is not cool, and I would put more time into auth. This is fake auth for demonstration purposes.
+- Passwords are stored in plain text for demo purposes and seeded via the seeds file. This is not cool, and I would put more time into auth. This is fake auth for demonstration purposes. There are 10 users available. See `db/seeds.rb` 
 - Controllers are handling a bit too much logic. I would extract much of this into service classes in the real world.
+- I started down a path of some sort of similarity full_name matching. The most crude implementation I could support would be to attempt to parse a full name and attempt to break it into first/middle/last, then if not found by full name, attempt to find by first/last. That's not very specific, and probably has a low success rate. My next inclination would be to use pg_search with a tsvector index, but this uses sqlite and I didn't have time to set that up. (I did see sqlite has a full text option, but I've never used it). I'd also consider elasticsearch fuzzy matching. And finally, to make it nice for the user, have a suggestion like "Did you mean [Canonical Name]?" and that would help. 
 - I leveraged AI tooling for **much** of the frontend code. There were a lot of specific UI elements that I would need a lot more time to implement. 
