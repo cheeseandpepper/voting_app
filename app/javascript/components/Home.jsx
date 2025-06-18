@@ -1,8 +1,8 @@
 import React from "react";
 
-const Home = ({ message }) => {
+const Home = ({ results }) => {
   return (
-    <h1>Message: {message}</h1>
+    <h1>Results: {results}</h1>
   );
 };
 
